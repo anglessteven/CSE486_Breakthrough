@@ -1,0 +1,218 @@
+Chain (W) played 1 3 2 3
+BBBBBBB
+BBBBBBB
+.......
+.......
+...W...
+WWW.WWW
+WWWWWWW
+[AWAY 1 GAME_ON]
+Greedy BT+ (B) played 5 3 4 3
+BBBBBBB
+BBB.BBB
+...B...
+.......
+...W...
+WWW.WWW
+WWWWWWW
+[HOME 2 GAME_ON]
+Chain (W) played 1 1 2 0
+BBBBBBB
+BBB.BBB
+...B...
+.......
+W..W...
+W.W.WWW
+WWWWWWW
+[AWAY 3 GAME_ON]
+Greedy BT+ (B) played 6 2 5 3
+BB.BBBB
+BBBBBBB
+...B...
+.......
+W..W...
+W.W.WWW
+WWWWWWW
+[HOME 4 GAME_ON]
+Chain (W) played 0 4 1 3
+BB.BBBB
+BBBBBBB
+...B...
+.......
+W..W...
+W.WWWWW
+WWWW.WW
+[AWAY 5 GAME_ON]
+Greedy BT+ (B) played 4 3 3 2
+BB.BBBB
+BBBBBBB
+.......
+..B....
+W..W...
+W.WWWWW
+WWWW.WW
+[HOME 6 GAME_ON]
+Chain (W) played 0 0 1 1
+BB.BBBB
+BBBBBBB
+.......
+..B....
+W..W...
+WWWWWWW
+.WWW.WW
+[AWAY 7 GAME_ON]
+Greedy BT+ (B) played 3 2 2 3
+BB.BBBB
+BBBBBBB
+.......
+.......
+W..B...
+WWWWWWW
+.WWW.WW
+[HOME 8 GAME_ON]
+Chain (W) played 1 4 2 5
+BB.BBBB
+BBBBBBB
+.......
+.......
+W..B.W.
+WWWW.WW
+.WWW.WW
+[AWAY 9 GAME_ON]
+Greedy BT+ (B) played 2 3 1 2
+BB.BBBB
+BBBBBBB
+.......
+.......
+W....W.
+WWBW.WW
+.WWW.WW
+[HOME 10 GAME_ON]
+Chain (W) played 0 3 1 2
+BB.BBBB
+BBBBBBB
+.......
+.......
+W....W.
+WWWW.WW
+.WW..WW
+[AWAY 11 GAME_ON]
+Greedy BT+ (B) played 5 2 4 2
+BB.BBBB
+BB.BBBB
+..B....
+.......
+W....W.
+WWWW.WW
+.WW..WW
+[HOME 12 GAME_ON]
+Chain (W) played 2 0 3 1
+BB.BBBB
+BB.BBBB
+..B....
+.W.....
+.....W.
+WWWW.WW
+.WW..WW
+[AWAY 13 GAME_ON]
+Greedy BT+ (B) played 4 2 3 1
+BB.BBBB
+BB.BBBB
+.......
+.B.....
+.....W.
+WWWW.WW
+.WW..WW
+[HOME 14 GAME_ON]
+Chain (W) played 1 5 2 4
+BB.BBBB
+BB.BBBB
+.......
+.B.....
+....WW.
+WWWW..W
+.WW..WW
+[AWAY 15 GAME_ON]
+Greedy BT+ (B) played 6 3 5 2
+BB..BBB
+BBBBBBB
+.......
+.B.....
+....WW.
+WWWW..W
+.WW..WW
+[HOME 16 GAME_ON]
+Chain (W) played 1 3 2 2
+BB..BBB
+BBBBBBB
+.......
+.B.....
+..W.WW.
+WWW...W
+.WW..WW
+[AWAY 17 GAME_ON]
+Greedy BT+ (B) played 3 1 2 2
+BB..BBB
+BBBBBBB
+.......
+.......
+..B.WW.
+WWW...W
+.WW..WW
+[HOME 18 GAME_ON]
+Chain (W) played 2 4 3 5
+BB..BBB
+BBBBBBB
+.......
+.....W.
+..B..W.
+WWW...W
+.WW..WW
+[AWAY 19 GAME_ON]
+Greedy BT+ (B) played 2 2 1 1
+BB..BBB
+BBBBBBB
+.......
+.....W.
+.....W.
+WBW...W
+.WW..WW
+[HOME 20 GAME_ON]
+Chain (W) played 3 5 4 5
+BB..BBB
+BBBBBBB
+.....W.
+.......
+.....W.
+WBW...W
+.WW..WW
+[AWAY 21 GAME_ON]
+Greedy BT+ (B) played 5 6 4 5
+BB..BBB
+BBBBBB.
+.....B.
+.......
+.....W.
+WBW...W
+.WW..WW
+[HOME 22 GAME_ON]
+Chain (W) played 1 2 2 1
+BB..BBB
+BBBBBB.
+.....B.
+.......
+.W...W.
+WB....W
+.WW..WW
+[AWAY 23 GAME_ON]
+Greedy BT+ (B) played 1 1 0 2
+BB..BBB
+BBBBBB.
+.....B.
+.......
+.W...W.
+W.....W
+.WB..WW
+[HOME 24 AWAY_WIN]
+Greedy BT+ (B) (359.987000 seconds remaining) won.
+Chain had 335.733000 seconds remaining.
