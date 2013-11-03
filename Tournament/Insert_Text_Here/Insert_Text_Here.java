@@ -10,7 +10,7 @@ import game.*;
 public class Insert_Text_Here extends GamePlayer {
 	public final int MAX_DEPTH = 50;
 	public int depthLimit;
-	public static final int MAX_SCORE = 100;
+	public static final int MAX_SCORE = Integer.MAX_VALUE;
 	protected ScoredBreakthroughMove[] mvStack;
 
 	protected class ScoredBreakthroughMove extends BreakthroughMove {
@@ -31,6 +31,8 @@ public class Insert_Text_Here extends GamePlayer {
 			endingCol = c2;
 			score = s;
 		}
+		
+		public void setScore(double s){ score = s;};
 
 		public Object clone() {
 			return new ScoredBreakthroughMove(startRow, startCol, endingRow,
@@ -63,7 +65,7 @@ public class Insert_Text_Here extends GamePlayer {
 		if (isTerminal) {
 			return;
 		} else if (currDepth == depthLimit) {
-			mvStack[currDepth].set(0, 0, 0, 0, evalBoard(brd)); // 0?
+			mvStack[currDepth].setScore(evalBoard(brd)); // 0?
 		} else {
 
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
@@ -71,7 +73,7 @@ public class Insert_Text_Here extends GamePlayer {
 			ScoredBreakthroughMove bestMove = mvStack[currDepth];
 			ScoredBreakthroughMove nextMove = mvStack[currDepth + 1];
 
-			bestMove.set(0, 0, 0, 0, bestScore); // 0?
+			bestMove.setScore(bestScore); // 0?
 			GameState.Who currTurn = brd.getWho();
 
 			// Find valid moves
@@ -115,13 +117,17 @@ public class Insert_Text_Here extends GamePlayer {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
 				// tempMv.col = c; // initialize move
+				
+				//Before move, store what type of board square existed there
+				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 
 				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
 															// move
 
 				// Undo move
-				brd.board[tempMv.endingRow][tempMv.endingCol] = BreakthroughState.emptySym;
+				
+				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
 				brd.numMoves--;
 				brd.status = GameState.Status.GAME_ON;
@@ -179,11 +185,13 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean isTerminal = true;
 
 		if (status == GameState.Status.HOME_WIN) {
-			mv.set(0, 0, 0, 0, MAX_SCORE); // 0?
+			mv.setScore(MAX_SCORE); // 0?
+			//System.out.println("HOME_WIN:" + mv.score);
 		} else if (status == GameState.Status.AWAY_WIN) {
-			mv.set(0, 0, 0, 0, -MAX_SCORE);
+			mv.setScore( -MAX_SCORE);
+			//System.out.println("AWAY_WIN:" + mv.score);
 		} else if (status == GameState.Status.DRAW) {
-			mv.set(0, 0, 0, 0, 0);
+			mv.setScore(0);
 		} else {
 			isTerminal = false;
 		}
@@ -235,7 +243,7 @@ public class Insert_Text_Here extends GamePlayer {
 					score = score + 1;
 			}
 		}
-		return 0;
+		return score;
 	}
 
 	/**

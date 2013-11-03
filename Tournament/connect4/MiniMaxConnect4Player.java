@@ -76,7 +76,7 @@ public class MiniMaxConnect4Player extends BaseConnect4Player {
 		return isTerminal;
 	}
 	/**
-	 * Performs the a depth limited minimax algorithm. It leaves it's
+	 * Performs the a depth limited minimax algorithm. It leaves it'sz
 	 * move recommendation at mvStack[currDepth]. 
 	 * @param brd current board state
 	 * @param currDepth current depth in the search
