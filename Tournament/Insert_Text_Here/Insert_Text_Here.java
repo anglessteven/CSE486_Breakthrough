@@ -52,6 +52,7 @@ public class Insert_Text_Here extends GamePlayer {
 		System.out.println(mvStack[0].score);
 		return mvStack[0];
 	}
+	
 
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta) {
@@ -109,8 +110,17 @@ public class Insert_Text_Here extends GamePlayer {
 					}
 				}
 			}
+			
+			//Perform Move Ordering
+			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
+				//return m1.score > m2.score;
+			//}});
+				
+				
+			});
+			
 			// System.out.println("suffle");
-			Collections.shuffle(moves);
+			//Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
@@ -235,7 +245,7 @@ public class Insert_Text_Here extends GamePlayer {
 					score = score + 1;
 			}
 		}
-		return 0;
+		return score;
 	}
 
 	/**
