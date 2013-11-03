@@ -15,7 +15,7 @@ import connect6.*;
 
 public class Tournament {
 	public enum GameType { TTT, Connect4, Breakthrough, Clobber, Hijara, Hex, Connect6 };
-	public static GameType game = GameType.Breakthrough;
+	public static GameType game = GameType.Connect4;
 
 	public static Params tournamentParams;
     public static Params gameParams;

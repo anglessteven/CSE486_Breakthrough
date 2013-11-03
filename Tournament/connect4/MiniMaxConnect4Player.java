@@ -66,8 +66,10 @@ public class MiniMaxConnect4Player extends BaseConnect4Player {
 		
 		if (status == GameState.Status.HOME_WIN) {
 			mv.set(0, MAX_SCORE);
+			// System.out.println("HOME_WIN: " + mv.score);
 		} else if (status == GameState.Status.AWAY_WIN) {
 			mv.set(0, - MAX_SCORE);
+			// System.out.println("AWAY_WIN: " + mv.score);
 		} else if (status == GameState.Status.DRAW) {
 			mv.set(0, 0);
 		} else {
