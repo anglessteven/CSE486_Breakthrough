@@ -223,12 +223,15 @@ public class Insert_Text_Here extends GamePlayer {
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
 				// if (who == BreakthroughState.homeSym && brd.board[5][c] == who) System.out.println("Win imminent");
-				int next = c + 1;
-				if (next < BreakthroughState.N && brd.board[r][c] == who
-						&& brd.board[r][next] == who)
-					score = score + 1;
-				// if (who == BreakthroughState.awaySym && brd.board[0][c] == who) score++;
-				// else if (who == BreakthroughState.homeSym && brd.board[6][c] == who) score++;
+				int next = r + 1;
+				if ((next < BreakthroughState.N) && (brd.board[r][c] == who) &&
+						(brd.board[next][c] == who)) {
+					score++;
+				}
+				//if ()
+				if (who == BreakthroughState.awaySym && brd.board[1][c] == who) score++;
+				else if (who == BreakthroughState.homeSym && brd.board[5][c] == who) score++;
+				if (who == brd.board[r][c]) score += 5;
 			}
 		}
 		return score;
@@ -242,8 +245,8 @@ public class Insert_Text_Here extends GamePlayer {
 	 * @return Black evaluation - Red evaluation
 	 */
 	public static int evalBoard(BreakthroughState brd) {
-		int score = eval(brd, BreakthroughState.awaySym)
-				- eval(brd, BreakthroughState.homeSym);
+		int score = eval(brd, BreakthroughState.homeSym)
+				- eval(brd, BreakthroughState.awaySym);
 		// System.out.println(score);
 		/*if (Math.abs(score) > MAX_SCORE) {
 			System.err.println("Problem with eval");
