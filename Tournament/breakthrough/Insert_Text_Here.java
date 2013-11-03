@@ -61,9 +61,10 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean isTerminal = terminalValue(brd, mvStack[currDepth]);
 
 		if (isTerminal) {
-			return;
+			//return;
+			;
 		} else if (currDepth == depthLimit) {
-			mvStack[currDepth].set(0, 0, 0, 0, evalBoard(brd)); // 0?
+			mvStack[currDepth].set(0,0,0,0, evalBoard(brd)); // 0?
 		} else {
 
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
@@ -186,6 +187,7 @@ public class Insert_Text_Here extends GamePlayer {
 			mv.set(0, 0, 0, 0, 0);
 		} else {
 			isTerminal = false;
+			
 		}
 		return isTerminal;
 	}
