@@ -215,4 +215,4 @@ pip-log.txt
 .mr.developer.cfg
 
 *.class
-Dumps/
+Tournament/Dumps/

@@ -45,6 +45,9 @@ public class Insert_Text_Here extends GamePlayer {
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
 		this.depthLimit = depthLimit;
+		// create new AlphaBetaMT[] containing threads
+		// fire them off
+		// wait to join
 	}
 
 	@Override
@@ -117,12 +120,9 @@ public class Insert_Text_Here extends GamePlayer {
 			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
 				//return m1.score > m2.score;
 			//}});
-				
-				
-			//});
 			
 			// System.out.println("suffle");
-			//Collections.shuffle(moves);
+			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
@@ -136,7 +136,6 @@ public class Insert_Text_Here extends GamePlayer {
 															// move
 
 				// Undo move
-				
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
 				brd.numMoves--;
@@ -164,7 +163,6 @@ public class Insert_Text_Here extends GamePlayer {
 						return;
 					}
 				}
-				// }
 			}
 		}
 	}
@@ -185,7 +183,7 @@ public class Insert_Text_Here extends GamePlayer {
 	 * for a HOME win and -X for an AWAY win.
 	 * 
 	 * @param brd
-	 *            Connect4 board to be examined
+	 *            Breakthrough board to be examined
 	 * @param mv
 	 *            where to place the score information; column is irrelevant
 	 * @return true if the brd is a terminal state
@@ -198,7 +196,7 @@ public class Insert_Text_Here extends GamePlayer {
 			mv.setScore(MAX_SCORE); // 0?
 			//System.out.println("HOME_WIN:" + mv.score);
 		} else if (status == GameState.Status.AWAY_WIN) {
-			mv.setScore( -MAX_SCORE);
+			mv.setScore(-MAX_SCORE);
 			//System.out.println("AWAY_WIN:" + mv.score);
 		} else if (status == GameState.Status.DRAW) {
 			mv.setScore(0);
@@ -253,12 +251,14 @@ public class Insert_Text_Here extends GamePlayer {
 				int next = c + 1;
 				if (next < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[r][next] == who)
-					score += 3;
+					score++;
 				/* check behind */
 				int nextFront = r + 1;
 				if (nextFront < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[nextFront][c] == who)
 					score++;
+				/* value having more players */
+				if (who == brd.board[r][c]) score++;
 			}
 		}
 		return score;
