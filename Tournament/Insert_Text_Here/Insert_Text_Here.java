@@ -122,7 +122,7 @@ public class Insert_Text_Here extends GamePlayer {
 			//});
 			
 			// System.out.println("suffle");
-			//Collections.shuffle(moves);
+			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
@@ -238,7 +238,7 @@ public class Insert_Text_Here extends GamePlayer {
 			for (int c = 0; c < BreakthroughState.N; c++) {
 				int left = c - 1;
 				int right = c + 1;
-				/* Check for x_x_x in last row */
+				/* Check for _x_ in last row */
 				if (left >= 0 && right < BreakthroughState.N) {
 					if (brd.board[r][left] == BreakthroughState.emptySym &&
 							brd.board[r][right] == BreakthroughState.emptySym) {
@@ -249,16 +249,31 @@ public class Insert_Text_Here extends GamePlayer {
 						}
 					}
 				}
+				/* Last row flanking defense */
+				if (c == 2 || c == 4) {
+					if ((who == BreakthroughState.awaySym && brd.board[r][c] == who
+							&& r == 6) || (who == BreakthroughState.homeSym && brd.board[r][c]
+									== who && r == 0)) {
+						if ((brd.board[r][1] == BreakthroughState.emptySym &&
+								brd.board[r][0] == BreakthroughState.emptySym) ||
+								(brd.board[r][5] == BreakthroughState.emptySym &&
+								brd.board[r][6] == BreakthroughState.emptySym)) {
+							score--;
+						}
+					}
+				}
 				/* check adjacent */
 				int next = c + 1;
 				if (next < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[r][next] == who)
-					score += 3;
+					score += 2;
 				/* check behind */
 				int nextFront = r + 1;
 				if (nextFront < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[nextFront][c] == who)
-					score++;
+					score += 3;
+				/* raw # of pieces */
+				if (brd.board[r][c] == who) score++;
 			}
 		}
 		return score;
