@@ -273,7 +273,7 @@ public class Insert_Text_Here extends GamePlayer {
 						&& brd.board[nextFront][c] == who)
 					score += 3;
 				/* raw # of pieces */
-				if (brd.board[r][c] == who) score++;
+				if (brd.board[r][c] == who) score += 3;
 			}
 		}
 		return score;
