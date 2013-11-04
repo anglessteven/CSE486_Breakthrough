@@ -113,16 +113,9 @@ public class Insert_Text_Here extends GamePlayer {
 				}
 			}
 			
-			//Perform Move Ordering
-			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
-				//return m1.score > m2.score;
-			//}});
-				
-				
-			});
 			
 			// System.out.println("suffle");
-			//Collections.shuffle(moves);
+			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
@@ -217,6 +210,7 @@ public class Insert_Text_Here extends GamePlayer {
 	 * BreakthroughState.emptySym) { ; } else { // opposing player in the region
 	 * return 0; } } return cnt; }
 	 */
+	
 	/**
 	 * Counts the number of adjacent pairs of spots with same player's piece.
 	 * 
@@ -240,13 +234,17 @@ public class Insert_Text_Here extends GamePlayer {
 		// also detect imminent wins
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
-				/*
-				 * if (who == BreakthroughState.awaySym) { if (brd.board[1][c]
-				 * == BreakthroughState.awaySym) { score += 500;
-				 * System.out.println("Away win imminent"); } } else { if
-				 * (brd.board[5][c] == BreakthroughState.homeSym) { score +=
-				 * 500; System.out.println("Home win imminent"); } }
-				 */
+				
+				  if (who == BreakthroughState.awaySym) { 
+					  if (r < (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.awaySym ){ //find pieces closest to the end of the board for away.
+						  score +=1;
+					  }
+				  } else if(who == BreakthroughState.awaySym) { 
+					  if (r > (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.homeSym ){ //find pieces closest to the end of the board for away.
+						  score +=1;
+					  }
+				  } 
+				 
 				int next = c + 1;
 				if (next < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[r][next] == who)
