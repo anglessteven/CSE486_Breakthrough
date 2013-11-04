@@ -17,8 +17,9 @@ import game.GameState;
  */
 public class AlphaBetaMT extends Thread {
 	public final int MAX_DEPTH = 50;
-	public int depthLimit;
+	public int depthLimit = 6;
 	public static final int MAX_SCORE = Integer.MAX_VALUE;
+	private GameState brd = null;
 	protected ScoredBreakthroughMove[] mvStack;
 	
 	protected class ScoredBreakthroughMove extends BreakthroughMove {
@@ -49,9 +50,7 @@ public class AlphaBetaMT extends Thread {
 
 		public double score;
 	}
-	/**
-	 * 
-	 */
+	
 	public AlphaBetaMT(int depthLimit) {
 		this.depthLimit = depthLimit;
 	}
@@ -60,13 +59,28 @@ public class AlphaBetaMT extends Thread {
 		// create new AlphaBetaMT[] containing threads
 		// fire them off
 		// wait to join
-		return null;
+		this.brd = brd;
+		AlphaBetaMT[] threads = new AlphaBetaMT[4];
+		for (int i=0; (i<threads.length); i++) {
+			threads[i] = new AlphaBetaMT(depthLimit);
+			threads[i].start();
+		}
+		for (int i=0; (i<threads.length); i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(mvStack[0].score);
+		return mvStack[0];
+		// return null;
 	}
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-
+		alphaBeta((BreakthroughState) brd, 0, Double.NEGATIVE_INFINITY,
+				Double.POSITIVE_INFINITY);
 	}
 	
 	/**
@@ -89,9 +103,11 @@ public class AlphaBetaMT extends Thread {
 		if (isTerminal) {
 			return;
 		} else if (currDepth == depthLimit) {
-			mvStack[currDepth].setScore(evalBoard(brd)); // 0?
+			synchronized (mvStack) {
+				mvStack[currDepth].setScore(evalBoard(brd));
+				mvStack.notifyAll();
+			}
 		} else {
-
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
 					: Double.POSITIVE_INFINITY);
 			ScoredBreakthroughMove bestMove = mvStack[currDepth];
@@ -116,19 +132,28 @@ public class AlphaBetaMT extends Thread {
 						if (brd.moveOK(mv)) {
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
-							moves.add((BreakthroughMove) mv.clone());
+							synchronized (moves) {
+								moves.add((BreakthroughMove) mv.clone());
+								moves.notifyAll();
+							}
 						}
 						mv.endingRow = r + dir;
 						mv.endingCol = c + 1;
 						if (brd.moveOK(mv)) {
-							moves.add((BreakthroughMove) mv.clone());
+							synchronized (moves) {
+								moves.add((BreakthroughMove) mv.clone());
+								moves.notifyAll();
+							}
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
 						}
 						mv.endingRow = r + dir;
 						mv.endingCol = c - 1;
 						if (brd.moveOK(mv)) {
-							moves.add((BreakthroughMove) mv.clone());
+							synchronized (moves) {
+								moves.add((BreakthroughMove) mv.clone());
+								moves.notifyAll();
+							}
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
 						}
@@ -136,31 +161,33 @@ public class AlphaBetaMT extends Thread {
 				}
 			}
 			
-			//Perform Move Ordering
-			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
-				//return m1.score > m2.score;
-			//}});
-			
-			// System.out.println("suffle");
-			Collections.shuffle(moves);
-			for (BreakthroughMove tempMv : moves) {
-				// int c = columns[i];
-				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
-				// tempMv.col = c; // initialize move
-				
+			synchronized (moves) {
+				Collections.shuffle(moves);
+				moves.notifyAll();
+			}
+			// for (BreakthroughMove tempMv : moves) {
+			while (moves.size() > 0) {
+				BreakthroughMove tempMv = null;
+				synchronized (moves) {
+					tempMv = moves.remove(0);
+					moves.notifyAll();
+				}
 				//Before move, store what type of board square existed there
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
-				brd.makeMove(tempMv);
+				synchronized (brd) {
+					brd.makeMove(tempMv);
 
-				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
-															// move
+					alphaBeta(brd, currDepth + 1, alpha, beta); // Check out move
 
-				// Undo move
-				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
-				brd.board[tempMv.startRow][tempMv.startCol] = me;
-				brd.numMoves--;
-				brd.status = GameState.Status.GAME_ON;
-				brd.who = currTurn;
+					// Undo move
+					brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
+					brd.board[tempMv.startRow][tempMv.startCol] = me;
+					brd.numMoves--;
+					brd.status = GameState.Status.GAME_ON;
+					brd.who = currTurn;
+					
+					brd.notifyAll();
+				}
 
 				// Check out the results, relative to what we've seen before
 				if (toMaximize && nextMove.score > bestMove.score) {
@@ -281,5 +308,4 @@ public class AlphaBetaMT extends Thread {
 		}
 		return score;
 	}
-
 }

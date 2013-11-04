@@ -1,22 +1,33 @@
 package Insert_Text_Here;
 
+import Insert_Text_Here.AlphaBetaMT.ScoredBreakthroughMove;
 import breakthrough.BreakthroughState;
 import game.*;
 
 public class Insert_Text_Here extends GamePlayer {
 	private AlphaBetaMT abMT = null;
+	private int depthLimit = 6;
+	public ScoredBreakthroughMove[] mvStack;
+	
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
-		abMT = new AlphaBetaMT(depthLimit);
+		this.depthLimit = depthLimit;
 	}
 
 	@Override
 	public GameMove getMove(GameState brd, String lastMove) {
-		/*alphaBeta((BreakthroughState) brd, 0, Double.NEGATIVE_INFINITY,
-				Double.POSITIVE_INFINITY);
-		System.out.println(mvStack[0].score);
-		return mvStack[0];*/
-		return abMT.getMove(brd, lastMove);
+		AlphaBetaMT[] threads = new AlphaBetaMT[4];
+		for (int i=0; (i<threads.length); i++) {
+			threads[i] = new AlphaBetaMT(depthLimit);
+			threads[i].start();
+		}
+		for (int i=0; (i<threads.length); i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**
