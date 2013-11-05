@@ -31,8 +31,10 @@ public class Insert_Text_Here extends GamePlayer {
 			endingCol = c2;
 			score = s;
 		}
-		
-		public void setScore(double s){ score = s;};
+
+		public void setScore(double s) {
+			score = s;
+		};
 
 		public Object clone() {
 			return new ScoredBreakthroughMove(startRow, startCol, endingRow,
@@ -54,7 +56,7 @@ public class Insert_Text_Here extends GamePlayer {
 		System.out.println(mvStack[0].score);
 		return mvStack[0];
 	}
-	
+
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta) {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
@@ -113,7 +115,7 @@ public class Insert_Text_Here extends GamePlayer {
 
 			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
-				//Before move, store what type of board square existed there
+				// Before move, store what type of board square existed there
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 
@@ -179,7 +181,7 @@ public class Insert_Text_Here extends GamePlayer {
 		if (status == GameState.Status.HOME_WIN) {
 			mv.setScore(MAX_SCORE);
 		} else if (status == GameState.Status.AWAY_WIN) {
-			mv.setScore( -MAX_SCORE);
+			mv.setScore(-MAX_SCORE);
 		} else if (status == GameState.Status.DRAW) {
 			mv.setScore(0);
 		} else {
@@ -207,39 +209,41 @@ public class Insert_Text_Here extends GamePlayer {
 		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
-				
-				  if (who == BreakthroughState.awaySym) { 
-					  if (r < (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.awaySym ){ //find pieces closest to the end of the board for away.
-						  score +=1;
-					  }
-				  } else if(who == BreakthroughState.awaySym) { 
-					  if (r > (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.homeSym ){ //find pieces closest to the end of the board for away.
-						  score +=1;
-					  }
-				  } 
-				 
+				/* check for pieces advancing */
+				if (who == BreakthroughState.awaySym) {
+					if (r < (BreakthroughState.N / 2)
+							&& brd.board[r][c] == BreakthroughState.awaySym) {
+						score += 1;
+					}
+				} else if (who == BreakthroughState.awaySym) {
+					if (r > (BreakthroughState.N / 2)
+							&& brd.board[r][c] == BreakthroughState.homeSym) {
+						score += 1;
+					}
+				}
+
 				int left = c - 1;
 				int right = c + 1;
 				/* Check for _x_ in last row */
 				if (left >= 0 && right < BreakthroughState.N) {
-					if (brd.board[r][left] == BreakthroughState.emptySym &&
-							brd.board[r][right] == BreakthroughState.emptySym) {
-						if ((who == BreakthroughState.awaySym && brd.board[r][c] == who
-								&& r == 6) || (who == BreakthroughState.homeSym && brd.board[r][c]
-										== who && r == 0)) {
+					if (brd.board[r][left] == BreakthroughState.emptySym
+							&& brd.board[r][right] == BreakthroughState.emptySym) {
+						if ((who == BreakthroughState.awaySym
+								&& brd.board[r][c] == who && r == 6)
+								|| (who == BreakthroughState.homeSym
+										&& brd.board[r][c] == who && r == 0)) {
 							score--;
 						}
 					}
 				}
 				/* Last row flanking defense */
 				if (c == 2 || c == 4) {
-					if ((who == BreakthroughState.awaySym && brd.board[r][c] == who
-							&& r == 6) || (who == BreakthroughState.homeSym && brd.board[r][c]
-									== who && r == 0)) {
-						if ((brd.board[r][1] == BreakthroughState.emptySym &&
-								brd.board[r][0] == BreakthroughState.emptySym) ||
-								(brd.board[r][5] == BreakthroughState.emptySym &&
-								brd.board[r][6] == BreakthroughState.emptySym)) {
+					if ((who == BreakthroughState.awaySym
+							&& brd.board[r][c] == who && r == 6)
+							|| (who == BreakthroughState.homeSym
+									&& brd.board[r][c] == who && r == 0)) {
+						if ((brd.board[r][1] == BreakthroughState.emptySym && brd.board[r][0] == BreakthroughState.emptySym)
+								|| (brd.board[r][5] == BreakthroughState.emptySym && brd.board[r][6] == BreakthroughState.emptySym)) {
 							score--;
 						}
 					}
@@ -255,7 +259,8 @@ public class Insert_Text_Here extends GamePlayer {
 						&& brd.board[nextFront][c] == who)
 					score += 3;
 				/* raw # of pieces */
-				if (brd.board[r][c] == who) score += 3;
+				if (brd.board[r][c] == who)
+					score += 3;
 			}
 		}
 		return score;
