@@ -256,14 +256,13 @@ public class Insert_Text_Here extends GamePlayer {
 				
 				/* check adjacent */
 				int next = c + 1;
-				if (next < BreakthroughState.N && brd.board[r][c] == who && brd.board[r][next] == who){
+				if (next < BreakthroughState.N && brd.board[r][c] == who && brd.board[r][next] == who) {
 					score += ADJACENT;
 				}
 				/* raw # of pieces */
-				if (brd.board[r][c] == who){
+				if (brd.board[r][c] == who) {
 					score += NUM_PIECES;
 				}
-				
 				
 //				int left = c - 1;
 //				int right = c + 1;
@@ -309,7 +308,6 @@ public class Insert_Text_Here extends GamePlayer {
 	public static double evalBoard(BreakthroughState brd) {
 		double score = eval(brd, BreakthroughState.homeSym)
 				- eval(brd, BreakthroughState.awaySym);
-//		System.out.println(score);
 		if (Math.abs(score) > MAX_SCORE) {
 			System.err.println("Problem with eval");
 			System.exit(0);
@@ -322,5 +320,4 @@ public class Insert_Text_Here extends GamePlayer {
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
 		p.compete(args);
 	}
-
 }
