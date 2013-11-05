@@ -112,7 +112,13 @@ public class Insert_Text_Here extends GamePlayer {
 					}
 				}
 			}
-			
+			//Perform Move Ordering
+			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
+				//return m1.score > m2.score;
+			//}});
+				
+				
+			//});
 			
 			// System.out.println("suffle");
 			Collections.shuffle(moves);
@@ -221,17 +227,13 @@ public class Insert_Text_Here extends GamePlayer {
 	 * @return number of adjacent pairs equal to who
 	 */
 	private static int eval(BreakthroughState brd, char who) {
-		/*
-		 * int cnt = 0; for (int r=0; r<ROWS; r++) {v for (int c=0; c<COLS; c++)
-		 * { cnt += possible(brd, who, r, c, 1, 0); cnt += possible(brd, who, r,
-		 * c, 0, 1); cnt += possible(brd, who, r, c, 1, 1); cnt += possible(brd,
-		 * who, r, c, -1, 1); } } return cnt;
-		 */
 		// initializing all the variables I need on order to count the score,
 		int score = 0;
 
-		// count adjacent pieces here
-		// also detect imminent wins
+		// various eval functions for loop
+		// ideas: check different offensive/defensive configs?
+		// check furthest player?
+		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
 				
@@ -245,10 +247,44 @@ public class Insert_Text_Here extends GamePlayer {
 					  }
 				  } 
 				 
+				int left = c - 1;
+				int right = c + 1;
+				/* Check for _x_ in last row */
+				if (left >= 0 && right < BreakthroughState.N) {
+					if (brd.board[r][left] == BreakthroughState.emptySym &&
+							brd.board[r][right] == BreakthroughState.emptySym) {
+						if ((who == BreakthroughState.awaySym && brd.board[r][c] == who
+								&& r == 6) || (who == BreakthroughState.homeSym && brd.board[r][c]
+										== who && r == 0)) {
+							score--;
+						}
+					}
+				}
+				/* Last row flanking defense */
+				if (c == 2 || c == 4) {
+					if ((who == BreakthroughState.awaySym && brd.board[r][c] == who
+							&& r == 6) || (who == BreakthroughState.homeSym && brd.board[r][c]
+									== who && r == 0)) {
+						if ((brd.board[r][1] == BreakthroughState.emptySym &&
+								brd.board[r][0] == BreakthroughState.emptySym) ||
+								(brd.board[r][5] == BreakthroughState.emptySym &&
+								brd.board[r][6] == BreakthroughState.emptySym)) {
+							score--;
+						}
+					}
+				}
+				/* check adjacent */
 				int next = c + 1;
 				if (next < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[r][next] == who)
-					score = score + 1;
+					score += 2;
+				/* check behind */
+				int nextFront = r + 1;
+				if (nextFront < BreakthroughState.N && brd.board[r][c] == who
+						&& brd.board[nextFront][c] == who)
+					score += 3;
+				/* raw # of pieces */
+				if (brd.board[r][c] == who) score += 3;
 			}
 		}
 		return score;
@@ -259,7 +295,7 @@ public class Insert_Text_Here extends GamePlayer {
 	 * 
 	 * @param brd
 	 *            board to be evaluated
-	 * @return Black evaluation - Red evaluation
+	 * @return Home evaluation - Away evaluation
 	 */
 	public static int evalBoard(BreakthroughState brd) {
 		int score = eval(brd, BreakthroughState.homeSym)
