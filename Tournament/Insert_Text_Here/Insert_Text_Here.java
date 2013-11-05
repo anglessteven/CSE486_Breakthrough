@@ -55,7 +55,6 @@ public class Insert_Text_Here extends GamePlayer {
 		return mvStack[0];
 	}
 	
-
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta) {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
@@ -68,7 +67,6 @@ public class Insert_Text_Here extends GamePlayer {
 		} else if (currDepth == depthLimit) {
 			mvStack[currDepth].setScore(evalBoard(brd)); // 0?
 		} else {
-
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
 					: Double.POSITIVE_INFINITY);
 			ScoredBreakthroughMove bestMove = mvStack[currDepth];
@@ -113,30 +111,15 @@ public class Insert_Text_Here extends GamePlayer {
 				}
 			}
 			
-			//Perform Move Ordering
-			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
-				//return m1.score > m2.score;
-			//}});
-				
-				
-			//});
-			
-			// System.out.println("suffle");
 			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
-				// int c = columns[i];
-				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
-				// tempMv.col = c; // initialize move
-				
 				//Before move, store what type of board square existed there
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 
-				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
-															// move
+				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out move
 
 				// Undo move
-				
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
 				brd.numMoves--;
@@ -164,7 +147,6 @@ public class Insert_Text_Here extends GamePlayer {
 						return;
 					}
 				}
-				// }
 			}
 		}
 	}
@@ -195,11 +177,9 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean isTerminal = true;
 
 		if (status == GameState.Status.HOME_WIN) {
-			mv.setScore(MAX_SCORE); // 0?
-			//System.out.println("HOME_WIN:" + mv.score);
+			mv.setScore(MAX_SCORE);
 		} else if (status == GameState.Status.AWAY_WIN) {
 			mv.setScore( -MAX_SCORE);
-			//System.out.println("AWAY_WIN:" + mv.score);
 		} else if (status == GameState.Status.DRAW) {
 			mv.setScore(0);
 		} else {
@@ -208,15 +188,6 @@ public class Insert_Text_Here extends GamePlayer {
 		return isTerminal;
 	}
 
-	/*
-	 * private static int possible(BreakthroughState brd, char who, int r, int
-	 * c, int dr, int dc) { int cnt = 0; for (int i=0; i<4; i++) { int row = r +
-	 * dr * i; int col = c + dc * i; if (!Util.inrange(row, 0, ROWS-1) ||
-	 * !Util.inrange(col, 0, COLS-1)) { return 0; } else if (brd.board[row][col]
-	 * == who) { cnt++; } else if (brd.board[row][col] ==
-	 * BreakthroughState.emptySym) { ; } else { // opposing player in the region
-	 * return 0; } } return cnt; }
-	 */
 	/**
 	 * Counts the number of adjacent pairs of spots with same player's piece.
 	 * 
