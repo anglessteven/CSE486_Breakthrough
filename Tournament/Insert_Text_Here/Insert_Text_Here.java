@@ -9,6 +9,7 @@ import game.*;
 
 public class Insert_Text_Here extends GamePlayer {
 	public final int MAX_DEPTH = 50;
+	public static final int ADJACENT = 10, ADVANCED = 2, SUPPORTING = 4, TAKES = -2, GAP_PENALTY = -6;
 	public int depthLimit;
 	public static final int MAX_SCORE = Integer.MAX_VALUE;
 	protected ScoredBreakthroughMove[] mvStack;
@@ -117,12 +118,9 @@ public class Insert_Text_Here extends GamePlayer {
 			//Collections.sort(moves, new Comparator<move>(){public int compare( ScoredBreakthroughMove m1, ScoredBreakthroughMove m2){
 				//return m1.score > m2.score;
 			//}});
-				
-				
-			});
-			
+
 			// System.out.println("suffle");
-			//Collections.shuffle(moves);
+			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				// int c = columns[i];
 				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
@@ -135,8 +133,7 @@ public class Insert_Text_Here extends GamePlayer {
 				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
 															// move
 
-				// Undo move
-				
+				// Undo move	
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
 				brd.numMoves--;
@@ -235,11 +232,33 @@ public class Insert_Text_Here extends GamePlayer {
 		 */
 		// initializing all the variables I need on order to count the score,
 		int score = 0;
-
+		int dir = brd.who == BreakthroughState.Who.HOME ? +1 : -1;
 		// count adjacent pieces here
 		// also detect imminent wins
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
+				///////////////////////////////ADJACENT///////////////////////////////////////////
+				int next = c + 1;
+				if (next < BreakthroughState.N && brd.board[r][c] == who
+						&& brd.board[r][next] == who)
+					score += ADJACENT;
+				///////////////////////////////SUPPORTING///////////////////////////////////////////
+				///////////////////////////////TAKES////////////////////////////////////////////////
+				int row = r + dir;
+				int col = c;
+				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+					score += SUPPORTING;
+				}
+				col = c + 1;
+				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+					score += SUPPORTING;
+				}
+				col = c -1;
+				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+					score += SUPPORTING;
+				}
+				///////////////////////////////////////////////////////////////////////////////////
+				
 				/*
 				 * if (who == BreakthroughState.awaySym) { if (brd.board[1][c]
 				 * == BreakthroughState.awaySym) { score += 500;
@@ -247,15 +266,14 @@ public class Insert_Text_Here extends GamePlayer {
 				 * (brd.board[5][c] == BreakthroughState.homeSym) { score +=
 				 * 500; System.out.println("Home win imminent"); } }
 				 */
-				int next = c + 1;
-				if (next < BreakthroughState.N && brd.board[r][c] == who
-						&& brd.board[r][next] == who)
-					score = score + 1;
 			}
 		}
 		return score;
 	}
-
+	
+	private static boolean inBounds(int row, int col){
+		return (col < BreakthroughState.N && col >= 0)&& (row < BreakthroughState.N && row >= 0);
+	}
 	/**
 	 * The evaluation function
 	 * 
