@@ -9,9 +9,9 @@ import game.*;
 
 public class Insert_Text_Here extends GamePlayer {
 	public final int MAX_DEPTH = 50;
-	public static final int ADJACENT = 10, ADVANCED = 2, SUPPORTING = 4, TAKES = -2, GAP_PENALTY = -6;
+	public static final int ADJACENT = 10, SUPPORTING = 4, NUM_PIECES = 10, NUM_PIECES_MID = 3, TAKES = -2, GAP_PENALTY = -6;
 	public int depthLimit;
-	public static final int MAX_SCORE = Integer.MAX_VALUE;
+	public static final double MAX_SCORE = Integer.MAX_VALUE;
 	protected ScoredBreakthroughMove[] mvStack;
 
 	protected class ScoredBreakthroughMove extends BreakthroughMove {
@@ -32,8 +32,10 @@ public class Insert_Text_Here extends GamePlayer {
 			endingCol = c2;
 			score = s;
 		}
-		
-		public void setScore(double s){ score = s;};
+
+		public void setScore(double s) {
+			score = s;
+		};
 
 		public Object clone() {
 			return new ScoredBreakthroughMove(startRow, startCol, endingRow,
@@ -55,7 +57,6 @@ public class Insert_Text_Here extends GamePlayer {
 		System.out.println(mvStack[0].score);
 		return mvStack[0];
 	}
-	
 
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta) {
@@ -69,7 +70,6 @@ public class Insert_Text_Here extends GamePlayer {
 		} else if (currDepth == depthLimit) {
 			mvStack[currDepth].setScore(evalBoard(brd)); // 0?
 		} else {
-
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
 					: Double.POSITIVE_INFINITY);
 			ScoredBreakthroughMove bestMove = mvStack[currDepth];
@@ -120,20 +120,16 @@ public class Insert_Text_Here extends GamePlayer {
 			//}});
 
 			// System.out.println("suffle");
+
 			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
-				// int c = columns[i];
-				// if (brd.numInCol[c] < BreakthroughState.NUM_ROWS) {
-				// tempMv.col = c; // initialize move
-				
-				//Before move, store what type of board square existed there
+				// Before move, store what type of board square existed there
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 
-				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
-															// move
+				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out move
 
-				// Undo move	
+				// Undo move
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
 				brd.numMoves--;
@@ -161,7 +157,6 @@ public class Insert_Text_Here extends GamePlayer {
 						return;
 					}
 				}
-				// }
 			}
 		}
 	}
@@ -192,11 +187,9 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean isTerminal = true;
 
 		if (status == GameState.Status.HOME_WIN) {
-			mv.setScore(MAX_SCORE); // 0?
-			//System.out.println("HOME_WIN:" + mv.score);
+			mv.setScore(MAX_SCORE);
 		} else if (status == GameState.Status.AWAY_WIN) {
-			mv.setScore( -MAX_SCORE);
-			//System.out.println("AWAY_WIN:" + mv.score);
+			mv.setScore(-MAX_SCORE);
 		} else if (status == GameState.Status.DRAW) {
 			mv.setScore(0);
 		} else {
@@ -205,15 +198,6 @@ public class Insert_Text_Here extends GamePlayer {
 		return isTerminal;
 	}
 
-	/*
-	 * private static int possible(BreakthroughState brd, char who, int r, int
-	 * c, int dr, int dc) { int cnt = 0; for (int i=0; i<4; i++) { int row = r +
-	 * dr * i; int col = c + dc * i; if (!Util.inrange(row, 0, ROWS-1) ||
-	 * !Util.inrange(col, 0, COLS-1)) { return 0; } else if (brd.board[row][col]
-	 * == who) { cnt++; } else if (brd.board[row][col] ==
-	 * BreakthroughState.emptySym) { ; } else { // opposing player in the region
-	 * return 0; } } return cnt; }
-	 */
 	/**
 	 * Counts the number of adjacent pairs of spots with same player's piece.
 	 * 
@@ -223,49 +207,90 @@ public class Insert_Text_Here extends GamePlayer {
 	 *            'R' or 'B'
 	 * @return number of adjacent pairs equal to who
 	 */
-	private static int eval(BreakthroughState brd, char who) {
-		/*
-		 * int cnt = 0; for (int r=0; r<ROWS; r++) {v for (int c=0; c<COLS; c++)
-		 * { cnt += possible(brd, who, r, c, 1, 0); cnt += possible(brd, who, r,
-		 * c, 0, 1); cnt += possible(brd, who, r, c, 1, 1); cnt += possible(brd,
-		 * who, r, c, -1, 1); } } return cnt;
-		 */
+	private static double eval(BreakthroughState brd, char who) {
 		// initializing all the variables I need on order to count the score,
-		int score = 0;
-		int dir = brd.who == BreakthroughState.Who.HOME ? +1 : -1;
-		// count adjacent pieces here
-		// also detect imminent wins
+		double score = 0;
+		
+
+		int dir = who == BreakthroughState.homeSym ? +1 : -1;
+		int finish = (dir == -1) ?  0 : (BreakthroughState.N -1);
+		for(int i = 0; i < BreakthroughState.N; i++){
+			if(brd.board[finish][i] == who){
+				return MAX_SCORE;
+			}
+		}
+		// various eval functions for loop
+		// ideas: check different offensive/defensive configs?
+		// check furthest player?
+		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
-			for (int c = 0; c < BreakthroughState.N; c++) {
-				///////////////////////////////ADJACENT///////////////////////////////////////////
-				int next = c + 1;
-				if (next < BreakthroughState.N && brd.board[r][c] == who
-						&& brd.board[r][next] == who)
-					score += ADJACENT;
-				///////////////////////////////SUPPORTING///////////////////////////////////////////
-				///////////////////////////////TAKES////////////////////////////////////////////////
-				int row = r + dir;
-				int col = c;
-				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
-					score += SUPPORTING;
+			for (int c = 0; c < BreakthroughState.N; c++) {			
+				/* Supporting pieces */
+				if((dir == -1 && r != BreakthroughState.N-1) || (dir == 1 && r != 0)){
+					int row = r + dir;
+					int col = c;
+					if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+						score += (SUPPORTING);
+					}
+					col = c + 1;
+					if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+						score += (SUPPORTING );
+					}
+					col = c -1;
+					if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+						score += (SUPPORTING);
+					}
 				}
-				col = c + 1;
-				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
-					score += SUPPORTING;
+				/* check for pieces advancing */
+				if (who == BreakthroughState.awaySym) {
+					if (r < (BreakthroughState.N / 2)
+							&& brd.board[r][c] == BreakthroughState.awaySym) {
+						score += NUM_PIECES_MID;
+					}
+				} else if (who == BreakthroughState.awaySym) {
+					if (r > (BreakthroughState.N / 2)
+							&& brd.board[r][c] == BreakthroughState.homeSym) {
+						score += NUM_PIECES_MID;
+					}
 				}
-				col = c -1;
-				if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
-					score += SUPPORTING;
-				}
-				///////////////////////////////////////////////////////////////////////////////////
 				
-				/*
-				 * if (who == BreakthroughState.awaySym) { if (brd.board[1][c]
-				 * == BreakthroughState.awaySym) { score += 500;
-				 * System.out.println("Away win imminent"); } } else { if
-				 * (brd.board[5][c] == BreakthroughState.homeSym) { score +=
-				 * 500; System.out.println("Home win imminent"); } }
-				 */
+				/* check adjacent */
+				int next = c + 1;
+				if (next < BreakthroughState.N && brd.board[r][c] == who && brd.board[r][next] == who){
+					score += ADJACENT;
+				}
+				/* raw # of pieces */
+				if (brd.board[r][c] == who){
+					score += NUM_PIECES;
+				}
+				
+				
+//				int left = c - 1;
+//				int right = c + 1;
+//				/* Check for _x_ in last row */
+//				if (left >= 0 && right < BreakthroughState.N) {
+//					if (brd.board[r][left] == BreakthroughState.emptySym
+//							&& brd.board[r][right] == BreakthroughState.emptySym) {
+//						if ((who == BreakthroughState.awaySym
+//								&& brd.board[r][c] == who && r == 6)
+//								|| (who == BreakthroughState.homeSym
+//										&& brd.board[r][c] == who && r == 0)) {
+//							score--;
+//						}
+//					}
+//				}
+//				/* Last row flanking defense */
+//				if (c == 2 || c == 4) {
+//					if ((who == BreakthroughState.awaySym
+//							&& brd.board[r][c] == who && r == 6)
+//							|| (who == BreakthroughState.homeSym
+//									&& brd.board[r][c] == who && r == 0)) {
+//						if ((brd.board[r][1] == BreakthroughState.emptySym && brd.board[r][0] == BreakthroughState.emptySym)
+//								|| (brd.board[r][5] == BreakthroughState.emptySym && brd.board[r][6] == BreakthroughState.emptySym)) {
+//							score--;
+//						}
+//					}
+//				}
 			}
 		}
 		return score;
@@ -279,11 +304,12 @@ public class Insert_Text_Here extends GamePlayer {
 	 * 
 	 * @param brd
 	 *            board to be evaluated
-	 * @return Black evaluation - Red evaluation
+	 * @return Home evaluation - Away evaluation
 	 */
-	public static int evalBoard(BreakthroughState brd) {
-		int score = eval(brd, BreakthroughState.homeSym)
+	public static double evalBoard(BreakthroughState brd) {
+		double score = eval(brd, BreakthroughState.homeSym)
 				- eval(brd, BreakthroughState.awaySym);
+//		System.out.println(score);
 		if (Math.abs(score) > MAX_SCORE) {
 			System.err.println("Problem with eval");
 			System.exit(0);
