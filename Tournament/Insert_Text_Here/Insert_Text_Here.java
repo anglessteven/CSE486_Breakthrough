@@ -50,8 +50,8 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public GameMove getMove(GameState brd, String lastMove) {
-		alphaBeta((BreakthroughState) brd, 0,
-				Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+		alphaBeta((BreakthroughState) brd, 0, Double.NEGATIVE_INFINITY,
+				Double.POSITIVE_INFINITY);
 		System.out.println(mvStack[0].score);
 		return mvStack[0];
 		// return null;
@@ -77,10 +77,7 @@ public class Insert_Text_Here extends GamePlayer {
 		if (isTerminal) {
 			return;
 		} else if (currDepth == depthLimit) {
-			synchronized (mvStack) {
-				mvStack[currDepth].setScore(evalBoard(brd));
-				mvStack.notifyAll();
-			}
+			mvStack[currDepth].setScore(evalBoard(brd));
 		} else {
 			double bestScore = (toMaximize ? Double.NEGATIVE_INFINITY
 					: Double.POSITIVE_INFINITY);
@@ -106,28 +103,19 @@ public class Insert_Text_Here extends GamePlayer {
 						if (brd.moveOK(mv)) {
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
-							synchronized (moves) {
-								moves.add((BreakthroughMove) mv.clone());
-								moves.notifyAll();
-							}
+							moves.add((BreakthroughMove) mv.clone());
 						}
 						mv.endingRow = r + dir;
 						mv.endingCol = c + 1;
 						if (brd.moveOK(mv)) {
-							synchronized (moves) {
-								moves.add((BreakthroughMove) mv.clone());
-								moves.notifyAll();
-							}
+							moves.add((BreakthroughMove) mv.clone());
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
 						}
 						mv.endingRow = r + dir;
 						mv.endingCol = c - 1;
 						if (brd.moveOK(mv)) {
-							synchronized (moves) {
-								moves.add((BreakthroughMove) mv.clone());
-								moves.notifyAll();
-							}
+							moves.add((BreakthroughMove) mv.clone());
 							// System.out.println("Move: " + mv.endingRow +
 							// " | " + mv.endingCol);
 						}
@@ -135,34 +123,24 @@ public class Insert_Text_Here extends GamePlayer {
 				}
 			}
 
-			synchronized (moves) {
-				Collections.shuffle(moves);
-				moves.notifyAll();
-			}
+			Collections.shuffle(moves);
 			// for (BreakthroughMove tempMv : moves) {
 			while (moves.size() > 0) {
 				BreakthroughMove tempMv = null;
-				synchronized (moves) {
-					tempMv = moves.remove(0);
-					moves.notifyAll();
-				}
+				tempMv = moves.remove(0);
 				// Before move, store what type of board square existed there
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
-				synchronized (brd) {
-					brd.makeMove(tempMv);
+				brd.makeMove(tempMv);
 
-					alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
-																// move
+				alphaBeta(brd, currDepth + 1, alpha, beta); // Check out
+															// move
 
-					// Undo move
-					brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
-					brd.board[tempMv.startRow][tempMv.startCol] = me;
-					brd.numMoves--;
-					brd.status = GameState.Status.GAME_ON;
-					brd.who = currTurn;
-
-					brd.notifyAll();
-				}
+				// Undo move
+				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
+				brd.board[tempMv.startRow][tempMv.startCol] = me;
+				brd.numMoves--;
+				brd.status = GameState.Status.GAME_ON;
+				brd.who = currTurn;
 
 				// Check out the results, relative to what we've seen before
 				if (toMaximize && nextMove.score > bestMove.score) {
@@ -288,7 +266,7 @@ public class Insert_Text_Here extends GamePlayer {
 
 	public static void main(String[] args) {
 		int depth = 6;
-        GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
-        p.compete(args);
+		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
+		p.compete(args);
 	}
 }
