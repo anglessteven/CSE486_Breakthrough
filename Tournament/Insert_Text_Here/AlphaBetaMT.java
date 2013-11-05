@@ -22,8 +22,9 @@ public class AlphaBetaMT extends Thread {
 	private ArrayList<BreakthroughMove> moves;
 	private int start, end, depthLimit;
 	private BreakthroughState brd;
-	
-	public AlphaBetaMT(int start, int end, int depthLimit, BreakthroughState brd, ArrayList<BreakthroughMove> moves) {
+
+	public AlphaBetaMT(int start, int end, int depthLimit,
+			BreakthroughState brd, ArrayList<BreakthroughMove> moves) {
 		this.start = start;
 		this.end = end;
 		this.brd = brd;
@@ -34,12 +35,15 @@ public class AlphaBetaMT extends Thread {
 		for (int i = 0; i < MAX_DEPTH; i++) {
 			mvStack[i] = new ScoredBreakthroughMove(0, 0, 0, 0, 0);
 		}
-		
+
 		alphaBeta(this.brd, 0, Double.NEGATIVE_INFINITY,
 				Double.POSITIVE_INFINITY, true);
 	}
-	
-	
+/*
+  	@Override
+	public void run() {
+	}
+*/
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta, boolean firstLevel) {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
@@ -59,13 +63,13 @@ public class AlphaBetaMT extends Thread {
 
 			bestMove.setScore(bestScore);
 			GameState.Who currTurn = brd.getWho();
-			
+
 			char me = brd.who == BreakthroughState.Who.HOME ? BreakthroughState.homeSym
 					: BreakthroughState.awaySym;
 			int dir = brd.who == BreakthroughState.Who.HOME ? +1 : -1;
 			ArrayList<BreakthroughMove> moves;
-			
-			if(firstLevel){
+
+			if (firstLevel) {
 				moves = this.moves;
 			} else {
 				// Find valid moves
@@ -111,7 +115,7 @@ public class AlphaBetaMT extends Thread {
 				brd.makeMove(tempMv);
 
 				alphaBeta(brd, currDepth + 1, alpha, beta, false); // Check out
-															// move
+				// move
 
 				// Undo move
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;

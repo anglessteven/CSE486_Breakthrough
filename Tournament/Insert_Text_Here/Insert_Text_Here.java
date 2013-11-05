@@ -11,7 +11,7 @@ import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
 	public int depthLimit = 6;
-	private static final int NUMTHREADS = 1;
+	private static final int NUMTHREADS = 6;
 	
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
@@ -29,12 +29,12 @@ public class Insert_Text_Here extends GamePlayer {
 		ScoredBreakthroughMove best = moves.get(0);
 		for (ScoredBreakthroughMove sbm : moves) {
 			if (toMaximize) {
-				best = (sbm.score > best.score) ? sbm: best;
+				best = (sbm.score > best.score) ? sbm : best;
 			} else {
 				best = (sbm.score < best.score) ? sbm : best;
 			}
 		}
-		return null;
+		return best;
 	}
 	
 	private ArrayList<ScoredBreakthroughMove> runThreads(BreakthroughState brd) throws InterruptedException {
@@ -92,7 +92,9 @@ public class Insert_Text_Here extends GamePlayer {
 		
 		ArrayList<ScoredBreakthroughMove> alphaBetaMoves = new ArrayList<ScoredBreakthroughMove>();
 		
-		
+		for (int i = 0; i < NUMTHREADS; i++) {
+	            alphaBetaMoves.add(thrList[i].mvStack[0]);
+	    }
 		
 		return alphaBetaMoves;
 	}
