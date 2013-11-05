@@ -110,7 +110,7 @@ public class Insert_Text_Here extends GamePlayer {
 					}
 				}
 			}
-			
+
 			Collections.shuffle(moves);
 			for (BreakthroughMove tempMv : moves) {
 				//Before move, store what type of board square existed there
@@ -207,6 +207,17 @@ public class Insert_Text_Here extends GamePlayer {
 		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
+				
+				  if (who == BreakthroughState.awaySym) { 
+					  if (r < (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.awaySym ){ //find pieces closest to the end of the board for away.
+						  score +=1;
+					  }
+				  } else if(who == BreakthroughState.awaySym) { 
+					  if (r > (BreakthroughState.N/2) && brd.board[r][c] == BreakthroughState.homeSym ){ //find pieces closest to the end of the board for away.
+						  score +=1;
+					  }
+				  } 
+				 
 				int left = c - 1;
 				int right = c + 1;
 				/* Check for _x_ in last row */
