@@ -193,9 +193,9 @@ public class AlphaBetaMT extends Thread {
 		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
-				int left = c - 1;
+				 int left = c - 1;
 				int right = c + 1;
-				/* Check for x_x_x in last row */
+				// Check for x_x_x in last row
 				if (left >= 0 && right < BreakthroughState.N) {
 					if (brd.board[r][left] == BreakthroughState.emptySym
 							&& brd.board[r][right] == BreakthroughState.emptySym) {
@@ -207,17 +207,17 @@ public class AlphaBetaMT extends Thread {
 						}
 					}
 				}
-				/* check adjacent */
+				// check adjacent
 				int next = c + 1;
 				if (next < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[r][next] == who)
 					score++;
-				/* check behind */
+				// check behind
 				int nextFront = r + 1;
 				if (nextFront < BreakthroughState.N && brd.board[r][c] == who
 						&& brd.board[nextFront][c] == who)
 					score++;
-				/* value having more players */
+				// value having more players
 				if (who == brd.board[r][c])
 					score++;
 			}

@@ -12,7 +12,7 @@ import breakthrough.BreakthroughState;
 public class Insert_Text_Here extends GamePlayer {
 	public int depthLimit = 6;
 	private static final int NUMTHREADS = 4;
-	
+
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
 		this.depthLimit = depthLimit;
@@ -22,7 +22,7 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
 		ArrayList<ScoredBreakthroughMove> moves = new ArrayList<ScoredBreakthroughMove>();
 		try {
-			moves = runThreads((BreakthroughState)brd);
+			moves = runThreads((BreakthroughState) brd);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -36,8 +36,9 @@ public class Insert_Text_Here extends GamePlayer {
 		}
 		return best;
 	}
-	
-	private ArrayList<ScoredBreakthroughMove> runThreads(BreakthroughState brd) throws InterruptedException {
+
+	private ArrayList<ScoredBreakthroughMove> runThreads(BreakthroughState brd)
+			throws InterruptedException {
 		ArrayList<BreakthroughMove> moves = new ArrayList<BreakthroughMove>();
 		BreakthroughMove mv = new BreakthroughMove();
 		char me = brd.who == BreakthroughState.Who.HOME ? BreakthroughState.homeSym
@@ -66,41 +67,41 @@ public class Insert_Text_Here extends GamePlayer {
 				}
 			}
 		}
-		
+
 		int wholeNumber = moves.size() / NUMTHREADS;
-        int remainder = moves.size() % NUMTHREADS;
-        double batchIncrement = remainder / ((double) NUMTHREADS);
-        double batchRemainder = 0.0;
-        int index = 0, end = 0;
-        AlphaBetaMT[] thrList = new AlphaBetaMT[NUMTHREADS];
-        // Create the necessary number of threads.
-        for (int i = 0; i < NUMTHREADS; i++) {
-             end += wholeNumber;
-             batchRemainder += batchIncrement;
-             if(batchRemainder >= 1.0){
-                 end += Math.floor(batchRemainder);
-                 batchRemainder -= Math.floor(batchRemainder);
-             }
-            thrList[i] = new AlphaBetaMT(index, end, depthLimit, brd, moves);
-            index = end;
-            thrList[i].start();
-        }
-        // Wait for the threads to finish.
-        for (int i = 0; i < NUMTHREADS; i++) {
-            thrList[i].join();
-        }
-		
-		ArrayList<ScoredBreakthroughMove> alphaBetaMoves = new ArrayList<ScoredBreakthroughMove>();
-		
+		int remainder = moves.size() % NUMTHREADS;
+		double batchIncrement = remainder / ((double) NUMTHREADS);
+		double batchRemainder = 0.0;
+		int index = 0, end = 0;
+		AlphaBetaMT[] thrList = new AlphaBetaMT[NUMTHREADS];
+		// Create the necessary number of threads.
 		for (int i = 0; i < NUMTHREADS; i++) {
-	            alphaBetaMoves.add(thrList[i].getBestMove());
-	    }
+			end += wholeNumber;
+			batchRemainder += batchIncrement;
+			if (batchRemainder >= 1.0) {
+				end += Math.floor(batchRemainder);
+				batchRemainder -= Math.floor(batchRemainder);
+			}
+			thrList[i] = new AlphaBetaMT(index, end, depthLimit, brd, moves);
+			index = end;
+			thrList[i].start();
+		}
+		// Wait for the threads to finish.
+		for (int i = 0; i < NUMTHREADS; i++) {
+			thrList[i].join();
+		}
+
+		ArrayList<ScoredBreakthroughMove> alphaBetaMoves = new ArrayList<ScoredBreakthroughMove>();
+
+		for (int i = 0; i < NUMTHREADS; i++) {
+			alphaBetaMoves.add(thrList[i].getBestMove());
+		}
 
 		return alphaBetaMoves;
 	}
 
 	public static void main(String[] args) {
-		int depth = 6;
+		int depth = 7;
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
 		p.compete(args);
 	}
