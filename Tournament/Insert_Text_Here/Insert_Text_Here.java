@@ -11,7 +11,7 @@ import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
 	public int depthLimit = 6;
-	private static final int NUMTHREADS = 6;
+	private static final int NUMTHREADS = 4;
 	
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
@@ -93,9 +93,9 @@ public class Insert_Text_Here extends GamePlayer {
 		ArrayList<ScoredBreakthroughMove> alphaBetaMoves = new ArrayList<ScoredBreakthroughMove>();
 		
 		for (int i = 0; i < NUMTHREADS; i++) {
-	            alphaBetaMoves.add(thrList[i].mvStack[0]);
+	            alphaBetaMoves.add(thrList[i].getBestMove());
 	    }
-		
+
 		return alphaBetaMoves;
 	}
 

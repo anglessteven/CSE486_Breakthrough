@@ -11,14 +11,10 @@ import java.util.Collections;
 import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
-/**
- * @author Steven
- * 
- */
 public class AlphaBetaMT extends Thread {
 	public final int MAX_DEPTH = 50;
 	public static final int MAX_SCORE = Integer.MAX_VALUE;
-	protected ScoredBreakthroughMove[] mvStack;
+	private ScoredBreakthroughMove[] mvStack;
 	private ArrayList<BreakthroughMove> moves;
 	private int start, end, depthLimit;
 	private BreakthroughState brd;
@@ -27,11 +23,18 @@ public class AlphaBetaMT extends Thread {
 			BreakthroughState brd, ArrayList<BreakthroughMove> moves) {
 		this.start = start;
 		this.end = end;
-		this.brd = brd;
+		this.brd = (BreakthroughState) brd.clone();
 		this.depthLimit = depthLimit;
 		this.moves = moves;
-		
-		mvStack = new ScoredBreakthroughMove[MAX_DEPTH];
+	}
+	
+	public ScoredBreakthroughMove getBestMove(){
+		return mvStack[0];
+	}
+	
+  	@Override
+	public void run() {
+  		mvStack = new ScoredBreakthroughMove[MAX_DEPTH];
 		for (int i = 0; i < MAX_DEPTH; i++) {
 			mvStack[i] = new ScoredBreakthroughMove(0, 0, 0, 0, 0);
 		}
@@ -39,11 +42,7 @@ public class AlphaBetaMT extends Thread {
 		alphaBeta(this.brd, 0, Double.NEGATIVE_INFINITY,
 				Double.POSITIVE_INFINITY, true);
 	}
-/*
-  	@Override
-	public void run() {
-	}
-*/
+
 	private void alphaBeta(BreakthroughState brd, int currDepth, double alpha,
 			double beta, boolean firstLevel) {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
@@ -83,23 +82,20 @@ public class AlphaBetaMT extends Thread {
 							mv.endingRow = r + dir;
 							mv.endingCol = c;
 							if (brd.moveOK(mv)) {
-								// System.out.println("Move: " + mv.endingRow +
-								// " | " + mv.endingCol);
+					
 								moves.add((BreakthroughMove) mv.clone());
 							}
 							mv.endingRow = r + dir;
 							mv.endingCol = c + 1;
 							if (brd.moveOK(mv)) {
 								moves.add((BreakthroughMove) mv.clone());
-								// System.out.println("Move: " + mv.endingRow +
-								// " | " + mv.endingCol);
+
 							}
 							mv.endingRow = r + dir;
 							mv.endingCol = c - 1;
 							if (brd.moveOK(mv)) {
 								moves.add((BreakthroughMove) mv.clone());
-								// System.out.println("Move: " + mv.endingRow +
-								// " | " + mv.endingCol);
+							
 							}
 						}
 					}
@@ -166,10 +162,10 @@ public class AlphaBetaMT extends Thread {
 
 		if (status == GameState.Status.HOME_WIN) {
 			mv.setScore(MAX_SCORE); // 0?
-			// System.out.println("HOME_WIN:" + mv.score);
+			
 		} else if (status == GameState.Status.AWAY_WIN) {
 			mv.setScore(-MAX_SCORE);
-			// System.out.println("AWAY_WIN:" + mv.score);
+			
 		} else if (status == GameState.Status.DRAW) {
 			mv.setScore(0);
 		} else {
