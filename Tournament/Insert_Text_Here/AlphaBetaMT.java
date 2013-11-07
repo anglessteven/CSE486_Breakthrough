@@ -14,6 +14,7 @@ import breakthrough.BreakthroughState;
 public class AlphaBetaMT extends Thread {
 	public final int MAX_DEPTH = 50;
 	public static final int MAX_SCORE = Integer.MAX_VALUE;
+	public static final int ADJACENT = 3, SUPPORTING = 2, NUM_PIECES = 12, NUM_PIECES_MID = 1, GAP_PENALTY = 3;
 	private ScoredBreakthroughMove[] mvStack;
 	private ArrayList<BreakthroughMove> moves;
 	private int start, end, depthLimit;
@@ -183,19 +184,56 @@ public class AlphaBetaMT extends Thread {
 	 *            'R' or 'B'
 	 * @return number of adjacent pairs equal to who
 	 */
-	private static int eval(BreakthroughState brd, char who) {
+	private static double eval(BreakthroughState brd, char who) {
 		// initializing all the variables I need on order to count the score,
-		int score = 0;
-
+		double score = 0;
+		int dir = who == BreakthroughState.homeSym ? +1 : -1;
+		
 		// various eval functions for loop
-		// ideas: check different offensive/defensive configs?
-		// check furthest player?
-		// clumping
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
-				 int left = c - 1;
+				
+                /* Supporting pieces */
+                if((dir == -1 && r != BreakthroughState.N-1) || (dir == 1 && r != 0)){
+                        int row = r + dir;
+                        int col = c;
+                        if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+                                score += (SUPPORTING);
+                        }
+                        col = c + 1;
+                        if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+                                score += (SUPPORTING);
+                        }
+                        col = c -1;
+                        if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
+                                score += (SUPPORTING);
+                        }
+                }
+                /* check for pieces advancing */
+                if (who == BreakthroughState.awaySym) {
+                        if (r < (BreakthroughState.N / 2)
+                                        && brd.board[r][c] == BreakthroughState.awaySym) {
+                                score += NUM_PIECES_MID;
+                        }
+                } else if (who == BreakthroughState.awaySym) {
+                        if (r > (BreakthroughState.N / 2)
+                                        && brd.board[r][c] == BreakthroughState.homeSym) {
+                                score += NUM_PIECES_MID;
+                        }
+                }
+				/* check adjacent */
+                int next = c + 1;
+                if (next < BreakthroughState.N && brd.board[r][c] == who && brd.board[r][next] == who) {
+                        score += ADJACENT;
+                }
+                /* raw # of pieces */
+                if (brd.board[r][c] == who) {
+                        score += NUM_PIECES;
+                }
+                ///////////////////////////////////PENALTIES////////////////////////////////////////////
+				/* Check for _x_ in last row */
+				int left = c - 1;
 				int right = c + 1;
-				// Check for x_x_x in last row
 				if (left >= 0 && right < BreakthroughState.N) {
 					if (brd.board[r][left] == BreakthroughState.emptySym
 							&& brd.board[r][right] == BreakthroughState.emptySym) {
@@ -203,26 +241,31 @@ public class AlphaBetaMT extends Thread {
 								&& brd.board[r][c] == who && r == 6)
 								|| (who == BreakthroughState.homeSym
 										&& brd.board[r][c] == who && r == 0)) {
-							score--;
+							score -= GAP_PENALTY;
 						}
 					}
 				}
-				// check adjacent
-				int next = c + 1;
-				if (next < BreakthroughState.N && brd.board[r][c] == who
-						&& brd.board[r][next] == who)
-					score++;
-				// check behind
-				int nextFront = r + 1;
-				if (nextFront < BreakthroughState.N && brd.board[r][c] == who
-						&& brd.board[nextFront][c] == who)
-					score++;
-				// value having more players
-				if (who == brd.board[r][c])
-					score++;
-			}
-		}
+				
+				/* Last row flanking defense */
+				if (c == 2 || c == 4) {
+					if ((who == BreakthroughState.awaySym
+							&& brd.board[r][c] == who && r == 6)
+							|| (who == BreakthroughState.homeSym
+									&& brd.board[r][c] == who && r == 0)) {
+						if ((brd.board[r][1] == BreakthroughState.emptySym && brd.board[r][0] == BreakthroughState.emptySym)
+								|| (brd.board[r][5] == BreakthroughState.emptySym && brd.board[r][6] == BreakthroughState.emptySym)) {
+							score-= GAP_PENALTY;
+						}
+					}
+				}
+				
+			} //end c for
+		} //end r for
 		return score;
+	}
+	
+	private static boolean inBounds(int row, int col){
+        return (col < BreakthroughState.N && col >= 0)&& (row < BreakthroughState.N && row >= 0);
 	}
 
 	/**
@@ -232,8 +275,8 @@ public class AlphaBetaMT extends Thread {
 	 *            board to be evaluated
 	 * @return Home evaluation - Away evaluation
 	 */
-	public static int evalBoard(BreakthroughState brd) {
-		int score = eval(brd, BreakthroughState.homeSym)
+	public static double evalBoard(BreakthroughState brd) {
+		double score = eval(brd, BreakthroughState.homeSym)
 				- eval(brd, BreakthroughState.awaySym);
 		if (Math.abs(score) > MAX_SCORE) {
 			System.err.println("Problem with eval");

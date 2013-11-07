@@ -101,7 +101,7 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public static void main(String[] args) {
-		int depth = 7;
+		int depth = 6;
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
 		p.compete(args);
 	}
