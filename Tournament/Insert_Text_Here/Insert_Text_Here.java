@@ -11,7 +11,7 @@ import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
 	public int depthLimit = 6;
-	private static final int NUMTHREADS = 4;
+	private static final int NUMTHREADS = 2;
 
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
