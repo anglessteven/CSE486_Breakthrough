@@ -10,7 +10,7 @@ import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
-	public int depthLimit = 6;
+	public int depthLimit = 8;
 	private static final int NUMTHREADS = 2;
 
 	public Insert_Text_Here(String nickname, int depthLimit) {
@@ -101,7 +101,7 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public static void main(String[] args) {
-		int depth = 7;
+		int depth = 8;
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
 		p.compete(args);
 	}

@@ -13,7 +13,7 @@ import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class BookGenerator {
-	private static int depthLimit = 4;
+	private static int depthLimit = 1;
 	private static int moveDepth = 4;
 	private static String fileName = "openingbook.dat";
 	private static LinkedHashSet<String> boards = new LinkedHashSet<String>();

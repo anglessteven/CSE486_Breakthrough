@@ -11,7 +11,6 @@ public class OpeningBook {
 		StringBuffer sb = new StringBuffer();
 		while (s.hasNext()) {
 			String line = s.next();
-			char prev = 'N';
 			char next = 'N';
 			int pieceCount = 1;
 			for (int i=0; (i<line.length()); i++) {
@@ -25,7 +24,6 @@ public class OpeningBook {
 						sb.append(cur);
 					}
 					pieceCount = 1;
-					prev = cur;
 				} else if (cur == next) {
 					pieceCount++;
 				}
