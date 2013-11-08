@@ -102,8 +102,8 @@ public class AlphaBetaMT extends Thread {
 						}
 					}
 				}
+				Collections.shuffle(moves);
 			}
-			Collections.shuffle(moves);
 			int i = (firstLevel) ? this.start : 0;
 			int end = (firstLevel) ? this.end : moves.size();
 			for (; i < end; i++) {

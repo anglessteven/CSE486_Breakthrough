@@ -14,7 +14,7 @@ import breakthrough.BreakthroughState;
 
 public class BookGenerator {
 	private static int depthLimit = 1;
-	private static int moveDepth = 4;
+	private static int moveDepth = 1;
 	private static String fileName = "openingbook.dat";
 	private static LinkedHashSet<String> boards = new LinkedHashSet<String>();
 	private static GamePlayer p = new Insert_Text_Here("Insert_Text_Here",
@@ -86,9 +86,7 @@ public class BookGenerator {
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 				BreakthroughMove bm = (BreakthroughMove) p.getMove(brd, "");
-				char who = brd.who == BreakthroughState.Who.HOME ? BreakthroughState.homeSym
-						: BreakthroughState.awaySym;
-				boards.add(who + " " + OpeningBook.encode(Util.toString(brd.board))
+				boards.add(OpeningBook.encode(Util.toString(brd.board))
 						+ " " + bm.toString());
 				generateStates(brd, currMvDepth + 1);
 				// Undo move

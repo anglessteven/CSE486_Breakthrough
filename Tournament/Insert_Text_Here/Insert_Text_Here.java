@@ -3,15 +3,24 @@ package Insert_Text_Here;
 import game.GameMove;
 import game.GamePlayer;
 import game.GameState;
+import game.Util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
 
 import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
-	public int depthLimit = 8;
-	private static final int NUMTHREADS = 2;
+	private int depthLimit;
+	private static final int NUMTHREADS = Runtime.getRuntime()
+			.availableProcessors();
+	private Scanner book = null;
+	private String fileName = "openingbook.dat";
+	private HashMap<String, String> map = new HashMap<String, String>();
 
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
@@ -20,6 +29,18 @@ public class Insert_Text_Here extends GamePlayer {
 
 	public GameMove getMove(GameState brd, String lastMove) {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
+		BreakthroughState tmp = (BreakthroughState) brd;
+		String code = OpeningBook.encode(Util.toString(tmp.board));
+		
+		if (map.containsKey(code)) {
+			String move = map.get(code);
+			return new ScoredBreakthroughMove(Integer.parseInt(""+move.charAt(0)), Integer.parseInt(""+move.charAt(2)), 
+					Integer.parseInt(""+move.charAt(4)), Integer.parseInt(""+move.charAt(6)), 0);
+		} else if (map.containsKey(OpeningBook.invert(code))) {
+			String move = map.get(OpeningBook.invert(code));
+			int[] moveMap = OpeningBook.invertMove(move);
+			return new ScoredBreakthroughMove(moveMap[0], moveMap[1], moveMap[2], moveMap[3], 0);
+		}
 		ArrayList<ScoredBreakthroughMove> moves = new ArrayList<ScoredBreakthroughMove>();
 		try {
 			moves = runThreads((BreakthroughState) brd);
@@ -100,9 +121,26 @@ public class Insert_Text_Here extends GamePlayer {
 		return alphaBetaMoves;
 	}
 
+	public void init() {
+		try {
+			book = new Scanner(new File(fileName));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		String line = null;
+		while (book.hasNext()) {
+			line = book.nextLine();
+			int space = line.indexOf(' ');
+			String key = line.substring(0, space);
+			String value = line.substring(space + 1, line.length());
+			map.put(key, value);
+		}
+	}
+
 	public static void main(String[] args) {
-		int depth = 8;
+		int depth = 7;
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
-		p.compete(args);
+		p.init();
+		// p.compete(args);
 	}
 }

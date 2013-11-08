@@ -2,6 +2,8 @@ package Insert_Text_Here;
 
 import java.util.Scanner;
 
+import breakthrough.BreakthroughState;
+
 public class OpeningBook {
 	private static final String W = "W";
 	private static final String B = "B";
@@ -46,5 +48,17 @@ public class OpeningBook {
 			}
 		}
 		return inverted.toString();
+	}
+	
+	public static int[] invertMove(String move) {
+		int rStart = Integer.parseInt(""+move.charAt(0));
+		int cStart = Integer.parseInt(""+move.charAt(2));
+		int rEnd = Integer.parseInt(""+move.charAt(4));
+		int cEnd = Integer.parseInt(""+move.charAt(6));
+		int[] newMove = {rStart, cStart, rEnd, cEnd};
+		for (int i = 0; i<newMove.length; i++) {
+			newMove[i] = (BreakthroughState.N - 1) - newMove[i];
+		}
+		return newMove;
 	}
 }
