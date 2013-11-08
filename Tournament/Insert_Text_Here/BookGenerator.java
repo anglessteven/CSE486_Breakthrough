@@ -1,3 +1,7 @@
+/**
+ * Team A0: Mikey Pete, Steven Angles, Raquel Gonzalez
+ * Book Generator
+ */
 package Insert_Text_Here;
 
 import game.GamePlayer;
@@ -33,6 +37,9 @@ public class BookGenerator {
 				+ (System.currentTimeMillis() - start) + " ms.");
 	}
 
+	/**
+	 * Generate all states and write them to opening book file
+	 */
 	private static void generateBook() {
 		try {
 			file = new PrintWriter(fileName);
@@ -48,6 +55,12 @@ public class BookGenerator {
 		file.close();
 	}
 
+	/**
+	 * Recursively enumerate possible moves and evaluate them with alpha beta.
+	 * Move strings are stored in LinkedHashSet
+	 * @param brd the board state
+	 * @param currMvDepth the depth of the move
+	 */
 	private static void generateStates(BreakthroughState brd, int currMvDepth) {
 		if (currMvDepth == moveDepth) {
 			return;
@@ -86,6 +99,7 @@ public class BookGenerator {
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 				BreakthroughMove bm = (BreakthroughMove) p.getMove(brd, "");
+				// add encoded board and recommended move to opening book
 				boards.add(OpeningBook.encode(Util.toString(brd.board)) + " "
 						+ bm.toString());
 				generateStates(brd, currMvDepth + 1);

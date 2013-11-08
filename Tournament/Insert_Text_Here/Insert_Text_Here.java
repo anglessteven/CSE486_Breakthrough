@@ -1,3 +1,7 @@
+/**
+ * Team A0: Mikey Pete, Steven Angles, Raquel Gonzalez
+ * Game Player
+ */
 package Insert_Text_Here;
 
 import game.GameMove;
@@ -15,21 +19,37 @@ import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
+	private static final int DEPTH_LIMIT = 7;
 	private int depthLimit;
 	private static final int NUMTHREADS = Runtime.getRuntime()
 			.availableProcessors();
 	private Scanner book = null;
 	private String fileName = "openingbook.dat";
 	private HashMap<String, String> map = new HashMap<String, String>();
+	private double gameTime = 360.0;
 
 	public Insert_Text_Here(String nickname, int depthLimit) {
 		super(nickname, new BreakthroughState(), false);
 		this.depthLimit = depthLimit;
 	}
 
+	public void endGame(int result) {
+		depthLimit = DEPTH_LIMIT;
+		gameTime = 360.0;
+	}
+	
+	public void timeOfLastMove(double s) {
+		gameTime -= s;
+	}
+	
 	public GameMove getMove(GameState brd, String lastMove) {
+		// go into "safe mode" if the game time is low
+		if (gameTime <= 60) {
+			depthLimit = 6;
+		}
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
 		BreakthroughState tmp = (BreakthroughState) brd;
+		// check if the board state is covered by the opening book
 		String code = OpeningBook.encode(Util.toString(tmp.board));
 		if (map.containsKey(code)) {
 			String move = map.get(code);
@@ -43,12 +63,15 @@ public class Insert_Text_Here extends GamePlayer {
 			return new ScoredBreakthroughMove(moveMap[0], moveMap[1],
 					moveMap[2], moveMap[3], 0);
 		}
+		// Create threads to run alpha beta if the board configuration
+		// is not in the opening book
 		ArrayList<ScoredBreakthroughMove> moves = new ArrayList<ScoredBreakthroughMove>();
 		try {
 			moves = runThreads((BreakthroughState) brd);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		// choose the best move from what the threads returned
 		ScoredBreakthroughMove best = moves.get(0);
 		for (ScoredBreakthroughMove sbm : moves) {
 			if (toMaximize) {
@@ -60,6 +83,13 @@ public class Insert_Text_Here extends GamePlayer {
 		return best;
 	}
 
+	/**
+	 * Method to generate all possible moves from given board state
+	 * and split up the work across threads
+	 * @param brd the given board state
+	 * @return An arraylist of each threads' best move
+	 * @throws InterruptedException
+	 */
 	private ArrayList<ScoredBreakthroughMove> runThreads(BreakthroughState brd)
 			throws InterruptedException {
 		ArrayList<BreakthroughMove> moves = new ArrayList<BreakthroughMove>();
@@ -67,6 +97,7 @@ public class Insert_Text_Here extends GamePlayer {
 		char me = brd.who == BreakthroughState.Who.HOME ? BreakthroughState.homeSym
 				: BreakthroughState.awaySym;
 		int dir = brd.who == BreakthroughState.Who.HOME ? +1 : -1;
+		// generate all possible initial moves
 		for (int r = 0; r < BreakthroughState.N; r++) {
 			for (int c = 0; c < BreakthroughState.N; c++) {
 				mv.startRow = r;
@@ -115,7 +146,8 @@ public class Insert_Text_Here extends GamePlayer {
 		}
 
 		ArrayList<ScoredBreakthroughMove> alphaBetaMoves = new ArrayList<ScoredBreakthroughMove>();
-
+		
+		// merge threads' moves into single arraylist
 		for (int i = 0; i < NUMTHREADS; i++) {
 			alphaBetaMoves.add(thrList[i].getBestMove());
 		}
@@ -124,6 +156,7 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public void init() {
+		// add all opening book's moves to hashmap
 		try {
 			book = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
@@ -140,7 +173,7 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public static void main(String[] args) {
-		int depth = 6;
+		int depth = DEPTH_LIMIT;
 		GamePlayer p = new Insert_Text_Here("Insert_Text_Here", depth);
 		p.compete(args);
 	}

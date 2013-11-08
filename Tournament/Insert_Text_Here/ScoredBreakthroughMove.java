@@ -1,3 +1,7 @@
+/**
+ * Team A0: Mikey Pete, Steven Angles, Raquel Gonzalez
+ * Scored Breakthrough Move
+ */
 package Insert_Text_Here;
 
 import breakthrough.BreakthroughMove;

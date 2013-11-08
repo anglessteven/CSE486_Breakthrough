@@ -1,5 +1,6 @@
 /**
- * 
+ * Team A0: Mikey Pete, Steven Angles, Raquel Gonzalez
+ * Alpha Beta Thread
  */
 package Insert_Text_Here;
 
@@ -112,8 +113,7 @@ public class AlphaBetaMT extends Thread {
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 
-				alphaBeta(brd, currDepth + 1, alpha, beta, false); // Check out
-				// move
+				alphaBeta(brd, currDepth + 1, alpha, beta, false); // Check out move
 
 				// Undo move
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
@@ -257,6 +257,9 @@ public class AlphaBetaMT extends Thread {
 		return score;
 	}
 
+	/**
+	 * Convenience method to check if potential move is valid
+	 */
 	private static boolean inBounds(int row, int col) {
 		return (col < BreakthroughState.N && col >= 0)
 				&& (row < BreakthroughState.N && row >= 0);
