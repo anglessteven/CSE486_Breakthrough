@@ -34,6 +34,7 @@ public class Insert_Text_Here extends GamePlayer {
 				best = (sbm.score < best.score) ? sbm : best;
 			}
 		}
+		System.out.println(best);
 		return best;
 	}
 

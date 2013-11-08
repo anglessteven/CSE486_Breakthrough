@@ -14,7 +14,7 @@ import breakthrough.BreakthroughState;
 public class AlphaBetaMT extends Thread {
 	public final int MAX_DEPTH = 50;
 	public static final int MAX_SCORE = Integer.MAX_VALUE;
-	public static final int ADJACENT = 3, SUPPORTING = 2, NUM_PIECES = 12, NUM_PIECES_MID = 1, GAP_PENALTY = 3;
+	public static final int ADJACENT = 3, SUPPORTING = 2, NUM_PIECES = 12, GAP_PENALTY = 3;
 	private ScoredBreakthroughMove[] mvStack;
 	private ArrayList<BreakthroughMove> moves;
 	private int start, end, depthLimit;
@@ -101,8 +101,8 @@ public class AlphaBetaMT extends Thread {
 						}
 					}
 				}
+				Collections.shuffle(moves);
 			}
-			Collections.shuffle(moves);
 			int i = (firstLevel) ? this.start : 0;
 			int end = (firstLevel) ? this.end : moves.size();
 			for (; i < end; i++) {
@@ -207,18 +207,6 @@ public class AlphaBetaMT extends Thread {
                         col = c -1;
                         if(inBounds(row, col) && brd.board[r][c] == who && brd.board[r][col] == who){
                                 score += (SUPPORTING);
-                        }
-                }
-                /* check for pieces advancing */
-                if (who == BreakthroughState.awaySym) {
-                        if (r < (BreakthroughState.N / 2)
-                                        && brd.board[r][c] == BreakthroughState.awaySym) {
-                                score += NUM_PIECES_MID;
-                        }
-                } else if (who == BreakthroughState.awaySym) {
-                        if (r > (BreakthroughState.N / 2)
-                                        && brd.board[r][c] == BreakthroughState.homeSym) {
-                                score += NUM_PIECES_MID;
                         }
                 }
 				/* check adjacent */
