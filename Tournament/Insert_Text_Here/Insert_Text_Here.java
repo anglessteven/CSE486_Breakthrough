@@ -9,17 +9,18 @@ import game.GamePlayer;
 import game.GameState;
 import game.Util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+
+
 
 import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class Insert_Text_Here extends GamePlayer {
-	private static final int DEPTH_LIMIT = 7;
+	private static final int DEPTH_LIMIT = 8;
 	private int depthLimit;
 	private static final int NUMTHREADS = Runtime.getRuntime()
 			.availableProcessors();
@@ -43,10 +44,15 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 	
 	public GameMove getMove(GameState brd, String lastMove) {
+		// go into "medium mode" if the game time is less than half
+		if(gameTime <= 180){
+			depthLimit = 7;
+		}
 		// go into "safe mode" if the game time is low
 		if (gameTime <= 60) {
 			depthLimit = 6;
 		}
+		System.out.println("DEPTH: " + depthLimit);
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
 		BreakthroughState tmp = (BreakthroughState) brd;
 		// check if the board state is covered by the opening book
@@ -156,12 +162,8 @@ public class Insert_Text_Here extends GamePlayer {
 	}
 
 	public void init() {
-		// add all opening book's moves to hashmap
-		try {
-			book = new Scanner(new File(fileName));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		InputStream is = Insert_Text_Here.class.getResourceAsStream(fileName);
+		book = new Scanner(is);
 		String line = null;
 		while (book.hasNext()) {
 			line = book.nextLine();
