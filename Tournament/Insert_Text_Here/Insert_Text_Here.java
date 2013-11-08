@@ -31,15 +31,17 @@ public class Insert_Text_Here extends GamePlayer {
 		boolean toMaximize = (brd.getWho() == GameState.Who.HOME);
 		BreakthroughState tmp = (BreakthroughState) brd;
 		String code = OpeningBook.encode(Util.toString(tmp.board));
-		
 		if (map.containsKey(code)) {
 			String move = map.get(code);
-			return new ScoredBreakthroughMove(Integer.parseInt(""+move.charAt(0)), Integer.parseInt(""+move.charAt(2)), 
-					Integer.parseInt(""+move.charAt(4)), Integer.parseInt(""+move.charAt(6)), 0);
+			return new ScoredBreakthroughMove(Integer.parseInt(""
+					+ move.charAt(0)), Integer.parseInt("" + move.charAt(2)),
+					Integer.parseInt("" + move.charAt(4)), Integer.parseInt(""
+							+ move.charAt(6)), 0);
 		} else if (map.containsKey(OpeningBook.invert(code))) {
 			String move = map.get(OpeningBook.invert(code));
 			int[] moveMap = OpeningBook.invertMove(move);
-			return new ScoredBreakthroughMove(moveMap[0], moveMap[1], moveMap[2], moveMap[3], 0);
+			return new ScoredBreakthroughMove(moveMap[0], moveMap[1],
+					moveMap[2], moveMap[3], 0);
 		}
 		ArrayList<ScoredBreakthroughMove> moves = new ArrayList<ScoredBreakthroughMove>();
 		try {
