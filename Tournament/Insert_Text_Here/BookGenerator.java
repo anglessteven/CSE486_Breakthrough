@@ -7,19 +7,24 @@ import game.Util;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import breakthrough.BreakthroughMove;
 import breakthrough.BreakthroughState;
 
 public class BookGenerator {
-	private static int depthLimit = 1;
-	private static int moveDepth = 1;
+	private static int depthLimit = 3;
+	private static int moveDepth = 3;
 	private static String fileName = "openingbook.dat";
 	private static LinkedHashSet<String> boards = new LinkedHashSet<String>();
 	private static GamePlayer p = new Insert_Text_Here("Insert_Text_Here",
 			depthLimit);
 	private static PrintWriter file = null;
+	private static long flushCounter = 0;
+	private static long flushPointer = 0;
+	private static final int FLUSH_INTERVAL = 10000;
+	private static Iterator<String> it = boards.iterator();
 
 	/**
 	 * @param args
@@ -42,9 +47,6 @@ public class BookGenerator {
 		BreakthroughState init = new BreakthroughState();
 		init.who = GameState.Who.HOME;
 		generateStates(init, 0);
-		for (String s : boards) {
-			file.println(s);
-		}
 		file.close();
 	}
 
@@ -86,9 +88,17 @@ public class BookGenerator {
 				char prevPiece = brd.board[tempMv.endingRow][tempMv.endingCol];
 				brd.makeMove(tempMv);
 				BreakthroughMove bm = (BreakthroughMove) p.getMove(brd, "");
-				boards.add(OpeningBook.encode(Util.toString(brd.board))
-						+ " " + bm.toString());
+				boards.add(OpeningBook.encode(Util.toString(brd.board)) + " "
+						+ bm.toString());
 				generateStates(brd, currMvDepth + 1);
+				if (flushCounter % FLUSH_INTERVAL == 0) {
+					for (; flushPointer < flushCounter; flushPointer++) {
+						if (it.hasNext()) {
+							file.println(it.next());
+						}
+					}
+				}
+				flushCounter++;
 				// Undo move
 				brd.board[tempMv.endingRow][tempMv.endingCol] = prevPiece;
 				brd.board[tempMv.startRow][tempMv.startCol] = me;
