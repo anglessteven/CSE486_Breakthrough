@@ -47,6 +47,13 @@ public class BookGenerator {
 		BreakthroughState init = new BreakthroughState();
 		init.who = GameState.Who.HOME;
 		generateStates(init, 0);
+		if (flushCounter % FLUSH_INTERVAL != 0) {
+			for (; flushPointer < flushCounter; flushPointer++) {
+				if (it.hasNext()) {
+					file.println(it.next());
+				}
+			}
+		}
 		file.close();
 	}
 
