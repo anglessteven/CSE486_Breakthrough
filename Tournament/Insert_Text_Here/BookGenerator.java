@@ -14,7 +14,7 @@ import breakthrough.BreakthroughState;
 
 public class BookGenerator {
 	private static int depthLimit = 3;
-	private static int moveDepth = 3;
+	private static int moveDepth = 4;
 	private static String fileName = "openingbook.dat";
 	private static LinkedHashSet<String> boards = new LinkedHashSet<String>();
 	private static GamePlayer p = new Insert_Text_Here("Insert_Text_Here",
@@ -42,6 +42,9 @@ public class BookGenerator {
 		BreakthroughState init = new BreakthroughState();
 		init.who = GameState.Who.HOME;
 		generateStates(init, 0);
+		for (String s : boards) {
+			file.println(s);
+		}
 		file.close();
 	}
 
